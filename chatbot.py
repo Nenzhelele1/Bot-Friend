@@ -6,20 +6,16 @@ import redis
 import json
 
 app = Flask(__name__)
-CORS(app)  # Enable CORS for cross-origin requests
-
-# Security best practice - use environment variables for API keys
+CORS(app)  
 api_key = os.getenv("OPENAI_API_KEY")
 if not api_key:
     raise ValueError("OPENAI_API_KEY environment variable not set")
 
-# Initialize Redis client
 REDIS_URL = os.getenv("REDIS_URL", "redis://localhost:6379")
 redis_client = redis.Redis.from_url(REDIS_URL, decode_responses=True)
 
 client = OpenAI(api_key=api_key)
 
-# System message to guide AI behavior
 system_message = {
     "role": "system",
     "content": ("""
@@ -81,8 +77,7 @@ def chat_endpoint():
     try:
         data = request.get_json()
         message = data.get('message')
-        session_id = data.get('session_id', 'default')  # Default session
-
+        session_id = data.get('session_id', 'default') 
         if not message:
             return jsonify({"error": "Message is required"}), 400
 
