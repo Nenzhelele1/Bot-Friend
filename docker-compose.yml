@@ -1,0 +1,25 @@
+version: '3.8'
+
+services:
+  redis:
+    image: redis:7.0-alpine
+    container_name: redis_chat
+    volumes:
+      - redis_data:/data
+    restart: unless-stopped
+
+  ai-chat:
+    build: .
+    env_file:
+      - .env
+    container_name: chat_bot
+    depends_on:
+      - redis
+    environment:
+      - REDIS_URL=redis://redis:6379
+    ports:
+      - "5000:5000"  # Expose Flask port
+    restart: unless-stopped
+
+volumes:
+  redis_data:
